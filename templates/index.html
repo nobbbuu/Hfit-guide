@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hfit:Real-time Health Pose Estimation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        h1 span, h2 span {
+            opacity: 0; /* 초기 상태는 투명 */
+            display: inline-block; /* 각 span을 블록처럼 처리 */
+            animation: fadeInUp 0.5s ease forwards; /* 애니메이션 적용 */
+        }
+        body, html {
+            overflow-x: hidden;
+            height: 100%;
+            width:100%;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #EDE9FF 0%, #FFFFFF 80%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-family:'Roboto Slab', serif;
+            background-size: cover;
+        }
+        h1 {
+            text-shadow: 4px 4px 8px #aaa;
+            text-align: left; /* 텍스트 왼쪽 정렬 */
+            margin-left: 150px;
+            color:#FFFFFF;
+            font-size: 150px;
+            margin-bottom: 0px;
+            font-weight: 700;
+            margin-top: 30px;
+        }
+        h2 {
+            text-shadow: 4px 4px 8px #aaa;
+            text-align: left; /* 텍스트 왼쪽 정렬 */
+            margin-left: 160px;
+            color:#FFFFFF;
+            font-size: 40px;
+            margin-top: 10px; /* 텍스트를 아래로 내림 */
+            margin-bottom: 100px;
+            font-weight: 700;
+        }
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            gap: 40px;
+            font-family:'Roboto Slab', serif;
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            gap: 30px; 
+        }
+        .button {
+            flex: 1 1 auto%; /* 버튼의 너비를 30%로 설정하며 유연하게 조절 가능하도록 함 */
+            padding: 60px 0px; /* 패딩을 조정하여 버튼 크기 유지 */
+            font-size: 45px;
+            font-weight: bold; /* 글씨를 더 두껍게 */
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            width: 450px;
+            border-radius: 20px;
+            border: 5px solid white; /* 테두리를 더 두껍게 */
+            cursor: pointer;
+            box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.5), -6px -6px 10px rgba(255, 255, 255, 0.5); /* 입체감을 더해주는 그림자 */
+            text-align: center; 
+            font-family:'Roboto Slab', serif;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .button:hover {
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 20px rgba(0, 0, 0, 0.5); /* 밝고 어두운 그림자로 볼록한 효과 */
+            transform: scale(1.05); /* 버튼을 약간 확대 */
+        }
+        .button:active {
+            box-shadow: inset 0 5px 8px rgba(0, 0, 0, 0.7); /* 내부 그림자로 눌린 효과 */
+            transform: translateY(5px) scale(0.98); /* 버튼이 눌리고 약간 축소되는 효과 */
+        }
+        .musicbutton {
+            position: fixed;
+            bottom: 30px;
+            left: 1910px;
+            width: 80px;
+            height: 80px;
+        }
+        .musicbutton2 {
+            position: fixed;
+            bottom: 30px;
+            left: 2000px;
+            width: 80px;
+            height: 80px;
+        }
+        .home-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 150px;
+            height: 60px;
+        }
+        .musicbutton i, .musicbutton2 i, .home-button i, .calendar-button i{
+            font-size: 23px; /* 아이콘 크기 조정 */
+        }
+        .home-button i, .musicbutton i, .musicbutton2 i{
+            margin-right: 8px;
+        }
+        .home-button, .musicbutton, .musicbutton2{
+            font-size: 16px;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background-color: #6C7A89;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .home-button:hover, .musicbutton:hover, .musicbutton2:hover{
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .buttonguide {
+            flex: 1 1 auto%; /* 버튼의 너비를 30%로 설정하며 유연하게 조절 가능하도록 함 */
+            padding: 40px 10px; /* 패딩을 조정하여 버튼 크기 유지 */
+            font-size: 30px;
+            font-weight: bold;
+            background-color: rgba(105, 105, 105, 0.7);
+            color: white;
+            border: 3px solid white; /* 테두리를 더 두껍게 */
+            width:450px;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.5), -6px -6px 10px rgba(255, 255, 255, 0.5); /* 입체감을 더해주는 그림자 */
+            text-align: center; /* 텍스트 중앙 정렬 */
+            font-family:'Roboto Slab', serif;
+            transition: all 0.3s ease;
+        }
+        .buttonguide:hover {
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 20px rgba(0, 0, 0, 0.5); /* 밝고 어두운 그림자로 볼록한 효과 */
+            transform: scale(1.05); /* 버튼을 약간 확대 */
+        }
+        .buttonguide:active {
+            box-shadow: inset 0 5px 8px rgba(0, 0, 0, 0.7); /* 내부 그림자로 눌린 효과 */
+            transform: translateY(5px) scale(0.98); /* 버튼이 눌리고 약간 축소되는 효과 */
+        }
+        .content {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            padding-left: 20px;
+        }
+        img {
+            margin-left: 50px;
+        }
+        
+        body {
+            background-image: url('/static/background.jpg');
+            background-size: cover;
+            background-position: center -280px;  /* 중앙에서 위로 50픽셀 올림 */
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .login-container {
+            position: fixed;
+            top: 25px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+            color: white; /* 텍스트 색상 */
+            font-size: 27px; /* 텍스트 크기 */
+            font-weight: bold; /* 텍스트 굵기 */
+        }
+        .login-container i {
+            margin-right: 25px; /* 아이콘과 텍스트 사이 간격 */
+            font-size: 32px; /* 아이콘 크기 */
+            background-color: transparent; /* 배경색 투명 */
+            color: white; /* 아이콘 색상 */
+            border: 3px solid white; /* 화이트 색상의 볼드 테두리 */
+            border-radius: 50%; /* 동그라미 모양 */
+            padding: 10px; /* 아이콘 주변 패딩 */
+            display: flex; /* 중앙 정렬을 위한 flex 설정 */
+            justify-content: center; /* 수평 중앙 정렬 */
+            align-items: center; /* 수직 중앙 정렬 */
+        }
+        .login-container span {
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* 애니메이션 전환 효과 */
+            cursor: pointer; /* 클릭 가능한 요소임을 나타내는 커서로 변경 */
+        }
+        .login-container span:hover {
+            transform: translateY(-2px); /* 위로 약간 이동 */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5); /* 그림자 효과로 입체감 생성 */
+        }
+        .login-container span:active {
+            transform: translateY(1px); /* 클릭시 아래로 살짝 이동 */
+            box-shadow: 0 2px 3px rgba(0,0,0,0.3); /* 클릭시 그림자 효과 감소 */
+        }
+        .icon-button {
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            background-color: transparent; /* 투명 배경 */
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease; /* 전환 효과 적용 */
+        }
+        .icon-button i {
+            font-size: 33px; /* 초기 아이콘 크기 설정 */
+            color: white;
+            transition: transform 0.3s ease; /* 아이콘 확대를 위한 전환 효과 */
+        }
+        .icon-button:hover i{
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 20px rgba(0, 0, 0, 0.5); /* 밝고 어두운 그림자로 볼록한 효과 */
+            transform: scale(1.15); /* 버튼을 약간 확대 */
+        }     
+        .icon-button:active i{
+            box-shadow: inset 0 5px 8px rgba(0, 0, 0, 0.7); /* 내부 그림자로 눌린 효과 */
+            transform: translateY(5px) scale(0.98); /* 버튼이 눌리고 약간 축소되는 효과 */
+        } 
+        .login-container .fa-calendar {
+            margin-right: 10px; /* 오른쪽 마진을 10px로 줄여 간격을 좁힘 */
+            margin-left: 20px; /* 왼쪽 마진을 20px로 설정하여 간격을 늘림 */
+        }
+             
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <i class="fas fa-user"></i> <!-- Font Awesome 사용자 아이콘 -->
+        <span>Log In</span>
+        <button class="icon-button" onclick="openCalendar()">
+            <i class="fas fa-calendar"></i>
+        </button>
+    </div>      
+    <div class="content">
+        <div>
+            <h1 id="animatedTitle"><span>H</span><span>F</span><span>I</span><span>T</span><span>-</span><span>G</span><span>U</span><span>I</span><span>D</span><span>E</span>
+            </h1>
+            <h2 id="animatedTitle">
+                <span>A system that corrects your home training posture</span>
+            </h2>
+        </div>
+    </div>
+    <div class="buttons">
+        <div class="row">
+            <button class="buttonguide" onclick="viewsquat()">Guided Squat video</button>
+            <button class="buttonguide" onclick="viewlunge()">Guided Lunge video</button>
+            <button class="buttonguide" onclick="viewplank()">Guided Plank video</button>
+            <button class="buttonguide" onclick="viewdolphin()">Guided Dolphin video</button>
+        </div>
+        <div class="row">
+            <button class="home-button" onclick="window.location.href='/'">
+                <i class="fas fa-home"></i> Home
+            </button>
+            <button class="button" onclick="viewRecords_squat()">Start Squat!</button>
+            <button class="button" onclick="viewRecords_lunge()">Start Lunge!</button>
+            <button class= "button" onclick="howMany_plank()">Start Plank!</button>
+            <button class= "button" onclick="howMany_dolphin()">Start Dolphin!</button>
+            <button class="musicbutton" onclick="playMusic()" style="right: 115px;">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="musicbutton2" onclick="stopMusic()" style="right: 20px;">
+                <i class="fas fa-volume-mute"></i>
+            </button> 
+        </div>
+    </div>
+    <audio id="audioPlayer" controls hidden>
+        <source src="/static/playlist.wav" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+    <script>
+        window.onload = function() {
+            const spans = document.querySelectorAll('h1 span', 'h2 span');
+            spans.forEach((span, index) => {
+                span.style.animationDelay = `${index * 0.3}s`;
+            });
+        };
+        function viewsquat() {
+            window.location.href = '/squat';
+        }
+        function viewlunge() {
+            window.location.href = '/lunge';
+        }
+        function viewplank() {
+            window.location.href = '/plank';
+        }
+        function viewdolphin() {
+            window.location.href = '/dolphin';
+        }
+        function viewRecords_squat() {
+            window.location.href = '/records';
+        }
+        function viewRecords_lunge() {
+            window.location.href = '/records_lunge';
+        }
+        function howMany_plank() {
+            window.location.href = '/howmany_plank';
+        }
+        function howMany_dolphin() {
+            window.location.href = '/howmany_dolphin';
+        }
+        function playMusic() {
+            var audio = document.getElementById('audioPlayer');
+            audio.play();  // 음악 재생
+        }
+        function stopMusic() {
+            var audio = document.getElementById('audioPlayer');
+            audio.pause();  // 음악을 일시정지
+            // audio.currentTime = 0; 이 줄을 제거하면 음악이 처음부터 재생되지 않고 일시정지된 지점에서 재생됩니다.
+        }
+        function openCalendar() {
+            window.location.href = '/calendar'; // 캘린더 페이지로 이동
+        }
+        
+        function openGraph() {
+            window.location.href = '/graph'; // 그래프 페이지로 이동
+        }
+    </script>
+</body>
+</html>

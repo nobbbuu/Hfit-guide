@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hfit: Real-time Health Pose Estimation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: #E1F3FF;
+        }
+        h1 {
+            margin-bottom: 20px;
+            margin-left: 10px;
+        }
+        h2 {
+            font-size: 40px;
+            padding-left: 230px;
+            padding-right: 50px;
+        }
+        .status-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .button {
+            padding: 20px 50px;
+            font-size: 20px;
+            font-weight: bold;
+            background-color: #FFBBBC;
+            color: black;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 4px 4px 8px #aaa;
+            margin-left: 10px;
+        }
+        .musicbutton {
+            padding: 0; /* 패딩을 조정하여 버튼 크기 유지 */
+            font-size: 0; /* 텍스트 크기를 0으로 설정하여 아이콘만 보이게 함 */
+            font-weight: bold;
+            background-color: #FFCFF6;
+            color: black;
+            border: none;
+            border-radius: 50%; /* 원형 모양 만들기 */
+            cursor: pointer;
+            box-shadow: 4px 4px 8px #aaa;
+            text-align: center; /* 텍스트 중앙 정렬 */
+            position: fixed; /* 위치를 고정 */
+            bottom: 20px; /* 하단에서 20px 떨어진 위치 */
+            right: 20px; /* 오른쪽에서 20px 떨어진 위치 */
+            width: 80px; /* 너비 설정 */
+            height: 80px; /* 높이 설정 */
+        }
+        .musicbutton2 {
+            padding: 0; /* 패딩을 조정하여 버튼 크기 유지 */
+            font-size: 0; /* 텍스트 크기를 0으로 설정하여 아이콘만 보이게 함 */
+            font-weight: bold;
+            background-color: #FFCFF6;
+            color: black;
+            border: none;
+            border-radius: 50%; /* 원형 모양 만들기 */
+            cursor: pointer;
+            box-shadow: 4px 4px 8px #aaa;
+            text-align: center; /* 텍스트 중앙 정렬 */
+            position: fixed; /* 위치를 고정 */
+            bottom: 20px; /* 하단에서 20px 떨어진 위치 */
+            right: 120px; /* 오른쪽에서 120px 떨어진 위치 */
+            width: 80px; /* 너비 설정 */
+            height: 80px; /* 높이 설정 */
+        }
+        .musicbutton i, .musicbutton2 i {
+            font-size: 25px; /* 아이콘 크기 조정 */
+        }
+    </style>
+</head>
+<body>
+    <div class="status-container">
+        <h2>웹캠 촬영중...</h2>
+        <button class="button small-button" onclick="viewErrors_squat()">틀린 자세<br>기록 보기</button>
+        <button class="musicbutton" onclick="playMusic()" style="right: 120px;">
+            <i class="fas fa-volume-up"></i>
+        </button>
+        <button class="musicbutton2" onclick="stopMusic()" style="right: 20px;">
+            <i class="fas fa-volume-mute"></i>
+        </button>
+    </div>
+    <h1>카메라 기준 옆으로 선 상태에서 스쿼트를 진행해주세요.</h1>
+    <img src="{{ url_for('video_feed_squat') }}" alt="Pose Estimation Stream">
+    <audio id="audioPlayer" controls hidden>
+        <source src="/static/paris.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+    <canvas id="squatChart"></canvas>
+    <script>
+        function viewErrors_squat() {
+            window.location.href = '/graph_squat';
+        }
+        function playMusic() {
+            var audio = document.getElementById('audioPlayer');
+            audio.play();
+            audio.muted = false;
+        }
+        function stopMusic() {
+            var audio = document.getElementById('audioPlayer');
+            audio.pause();
+            audio.currentTime = 0;
+        }
+    </script>
+</body>
+</html>

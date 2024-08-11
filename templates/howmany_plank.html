@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>플랭크 횟수/유지시간 선택하기</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            overflow-x: hidden;
+            height: 100%;
+            width:100%;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #EDE9FF 0%, #FFFFFF 80%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-size: cover;
+        }
+        h1 {
+            color: #333;
+            font-size: 50px; /* Increased font size */
+            margin-bottom: 0px; /* Add space below the heading */
+            font-family: 'Noto Sans KR', sans-serif;
+            font-weight: 700; /* 글자를 굵게 */
+            font-size: 65px;
+            color: black;
+        }
+        .time-box {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 80px;
+            max-width: 610px; /* 상자 5개 너비의 총합에 해당하는 크기 설정 */
+            margin: auto; /* 페이지 중앙 정렬 */
+        }
+        .time-option {
+            top:50%;
+            width: 150px;
+            height: 150px;
+            border-radius: 20px; /* 둥근 모서리를 위한 설정 */
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column; /* 컨텐츠를 세로로 정렬 */
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #ccc; /* 두꺼운 테두리 설정 */
+            cursor: pointer;
+            box-shadow: 6px 6px 12px #888, -6px -6px 12px #ffffff; /* 외부 그림자 및 하이라이트 */
+            font-family: 'Noto Sans KR', sans-serif;
+            font-weight: 550; /* 글자를 굵게 */
+            font-size: 30px;
+            color: white;
+            outline: none;
+            transition: all 0.3s ease; /* 부드러운 전환 효과 */
+        }
+        .time-option:hover {
+            color: rgba(0, 0, 0, 0.7);
+            background-color: white;
+            box-shadow: 3px 3px 6px #888, -3px -3px 6px #ffffff; /* 호버 시 그림자 변경 */
+            transform: scale(1.15); /* 버튼을 약간 확대 */
+        }
+        .time-option:active {
+            box-shadow: inset 0px 0px 8px #888; /* 클릭 시 그림자 강조 및 내부 그림자로 변경 */
+            transform: translateY(5px) scale(0.98); /* 버튼이 눌리고 약간 축소되는 효과 & 버튼이 더 많이 눌렸다는 느낌을 주기 위해 더 크게 이동 */
+        }
+        .home-button {
+            padding: 0; /* 패딩을 조정하여 버튼 크기 유지 */
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #FFCFF6;
+            color: black;
+            border: none;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            font-size: 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 4px 4px 8px #aaa;
+        }
+        body {
+            background-image: url('/static/record_background.jpg');
+            background-size: cover;
+            background-position: center -280px;  /* 중앙에서 위로 50픽셀 올림 */
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .calendar-button, .home-button, .musicbutton, .musicbutton2{
+            font-size: 16px;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background-color: #6C7A89;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .calendar-button:hover, .home-button:hover, .musicbutton:hover, .musicbutton2:hover{
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .calendar-button i, .home-button i, .musicbutton i, .musicbutton2 i{
+            margin-right: 8px;
+        }
+        .calendar-button {
+            position: fixed;
+            bottom: 1000px;
+            right: 50px;
+            width: 230px;
+            height: 60px;
+        }
+        .home-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 150px;
+            height: 60px;
+        }
+        .musicbutton {
+            position: fixed;
+            bottom: 30px;
+            left: 1910px;
+            width: 80px;
+            height: 80px;
+        }
+        .musicbutton2 {
+            position: fixed;
+            bottom: 30px;
+            left: 2000px;
+            width: 80px;
+            height: 80px;
+        }
+        .musicbutton i, .musicbutton2 i, .home-button i, .calendar-button i{
+            font-size: 23px; /* 아이콘 크기 조정 */
+        }
+    </style>
+</head>
+<body>
+    <h1>플랭크 횟수/유지시간 선택하기</h1>
+    <div class="time-box">
+        <button class="home-button" onclick="window.location.href='/'">
+            <i class="fas fa-home"></i> Home
+        </button>
+        <button class="calendar-button" onclick="toggleCalendar();">
+            <i class="fas fa-calendar-alt"></i> Calendar
+        </button>
+        <button class="musicbutton" onclick="playMusic()" style="right: 120px;">
+            <i class="fas fa-volume-up"></i>
+        </button>
+        <button class="musicbutton2" onclick="stopMusic()" style="right: 20px;">
+            <i class="fas fa-volume-mute"></i>
+        </button>
+        <button class="time-option" onclick="viewRecords_plank_10sec()">2개<br>10초</button>
+        <button class="time-option" onclick="viewRecords_plank_20sec()">4개<br>20초</button>
+        <button class="time-option" onclick="viewRecords_plank_30sec()">6개<br>30초</button>
+        <button class="time-option" onclick="viewRecords_plank_40sec()">8개<br>40초</button>
+        <button class="time-option" onclick="viewRecords_plank_50sec()">10개<br>50초</button>
+        <button class="time-option" onclick="viewRecords_plank_60sec()">12개<br>60초</button>
+        <button class="time-option" onclick="viewRecords_plank_90sec()">18개<br>1분 30초</button>
+        <button class="time-option" onclick="viewRecords_plank_180sec()">36개<br>3분</button>
+        <button class="time-option" onclick="viewRecords_plank_300sec()">60개<br>5분</button>
+    </div>
+    <audio id="audioPlayer" controls hidden>
+        <source src="/static/playlist.wav" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+    <script>
+        function viewRecords_plank_10sec() {
+            window.location.href = '/records_plank_10sec';
+        }
+        function viewRecords_plank_20sec() {
+            window.location.href = '/records_plank_20sec';
+        }
+        function viewRecords_plank_30sec() {
+            window.location.href = '/records_plank_30sec';
+        }
+        function viewRecords_plank_40sec() {
+            window.location.href = '/records_plank_40sec';
+        }
+        function viewRecords_plank_50sec() {
+            window.location.href = '/records_plank_50sec';
+        }
+        function viewRecords_plank_60sec() {
+            window.location.href = '/records_plank_60sec';
+        }
+        function viewRecords_plank_90sec() {
+            window.location.href = '/records_plank_90sec';
+        }
+        function viewRecords_plank_180sec() {
+            window.location.href = '/records_plank_180sec';
+        }
+        function viewRecords_plank_300sec() {
+            window.location.href = '/records_plank_300sec';
+        }
+        function playMusic() {
+            var audio = document.getElementById('audioPlayer');
+            audio.play();  // 음악 재생
+        }
+        function stopMusic() {
+            var audio = document.getElementById('audioPlayer');
+            audio.pause();  // 음악을 일시정지
+            // audio.currentTime = 0; 이 줄을 제거하면 음악이 처음부터 재생되지 않고 일시정지된 지점에서 재생됩니다.
+        }
+    </script>
+</body>
+</html> 

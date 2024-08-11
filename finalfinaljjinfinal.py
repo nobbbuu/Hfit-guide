@@ -28,7 +28,7 @@ pygame.init()
 pygame.mixer.init()
 
 # 사운드 로드
-sound_file = 'plank_complete.wav'  # 재생할 파일 이름
+sound_file = 'plank_complete.wav'  
 sound = pygame.mixer.Sound(sound_file)
 
 font_path = "C:/Users/chaee/anaconda3/pkgs/matplotlib-base-3.4.3-py39h49ac443_0/Lib/site-packages/matplotlib/mpl-data/fonts/ttf/NanumGothicBold.ttf"
@@ -98,7 +98,6 @@ with app.app_context():
 # }
 
 # def play_feedback(feedback):
-#     # 피드백이 이미 재생된 경우 재생하지 않음
 #     if feedback_played.get(feedback, False):
 #         return
 
@@ -169,26 +168,26 @@ def flip_image(image):
     return cv2.flip(image, 1)
 
 feedback_counts = {}
-exclude_feedbacks = ['어깨너비로 발을 벌리고 스쿼트를 시작해주세요!', '']  # 카운트에서 제외할 메시지 목록
-body_part_counts = {"무릎": 0, "엉덩이": 0}  # 무릎과 엉덩이 카운트를 위한 딕셔너리
+exclude_feedbacks = ['어깨너비로 발을 벌리고 스쿼트를 시작해주세요!', ''] 
+body_part_counts = {"무릎": 0, "엉덩이": 0} 
 squat_counts = {}
 
 lunge_feedback_counts = {}
-exclude_feedbacks_lunge = ['발을 골반 너비로 벌리고 런지를 시작해주세요!', '']  # 카운트에서 제외할 메시지 목록
-body_part_counts_lunge = {"몸통": 0, "오른쪽 무릎": 0, "왼쪽 무릎": 0}   # 무릎과 엉덩이 카운트를 위한 딕셔너리
+exclude_feedbacks_lunge = ['발을 골반 너비로 벌리고 런지를 시작해주세요!', '']  
+body_part_counts_lunge = {"몸통": 0, "오른쪽 무릎": 0, "왼쪽 무릎": 0}   
 lunge_counts = {}
 lunge_detected = False
 lunge_start_time = None
 
 plank_feedback_counts = {}
-exclude_feedbacks_plank = ['플랭크를 시작해주세요!', '']  # 카운트에서 제외할 메시지 목록
-body_part_counts_plank = {"어깨": 0, "엉덩이": 0, "무릎": 0}   # 무릎과 엉덩이 카운트를 위한 딕셔너리
+exclude_feedbacks_plank = ['플랭크를 시작해주세요!', '']  
+body_part_counts_plank = {"어깨": 0, "엉덩이": 0, "무릎": 0}   
 plank_counts = {}
 plank_detected = False
 plank_start_time = None
 
 dolphin_feedback_counts = {}
-exclude_feedbacks_dolphin = ['돌고래자세를 시작해주세요!', '']  # 카운트에서 제외할 메시지 목록
+exclude_feedbacks_dolphin = ['돌고래자세를 시작해주세요!', '']  
 body_part_counts_dolphin = {"엉덩이 고관절": 0, "무릎": 0, "어깨 팔꿈치": 0}  
 dolphin_counts = {}
 dolphin_detected = False
@@ -197,18 +196,18 @@ dolphin_start_time = None
 camera_manager = CameraManager()
 
 def generate_frames_squat():
-    global body_part_counts, squat_counts, app  # 전역 변수 사용 선언
+    global body_part_counts, squat_counts, app  
     
     with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
         # cap = cv2.VideoCapture(0)
         
-        initial_head_height = None  # 초기 머리 높이 저장 변수
-        feedback_flag = True  # 초기 피드백 표시 플래그
-        squat_start = False  # 스쿼트 내려갔는지 상태
+        initial_head_height = None  
+        feedback_flag = True  
+        squat_start = False  
         squat_completed = False
         squat_up = False
         squat_down = False
-        good_squat_feedback_counts = {}  # 좋은 스쿼트 피드백 카운트 딕셔너리 초기화
+        good_squat_feedback_counts = {}  
         
         while True:
             frame = camera_manager.get_frame()
@@ -258,8 +257,8 @@ def generate_frames_squat():
                         if shoulder_width < 0.1 and hip_width < 0.1:
                             feedback_flag = False
                             if (not squat_start) and (not squat_completed):
-                                initial_head_height = head[1]  # 스쿼트 시작 시 머리 높이 측정
-                                squat_start = True  # 스쿼트 시작 상태 활성화
+                                initial_head_height = head[1] 
+                                squat_start = True  
                                 squat_down = True
                                 
                             if (squat_start) and (head[1] > initial_head_height):                                                       
@@ -307,23 +306,23 @@ def generate_frames_squat():
                                         feedback = "이제 허리를 세우고 천천히 올라와주세요!"
                                         font_color = (255, 255, 0)
                                     else:
-                                        feedback = ""  # 무릎 각도가 105도를 넘으면 피드백을 비워 표시 중지
-                                        font_color = (255, 255, 255)  # 피드백이 없으므로 글씨색은 관계 없음
-                                        # 피드백 카운트 초기화 및 새 스쿼트 준비
-                                        good_squat_feedback_counts.clear()  # 모든 피드백 카운트 초기화
+                                        feedback = ""  
+                                        font_color = (255, 255, 255)  
+                                        
+                                        good_squat_feedback_counts.clear()  
                                         date_key = datetime.now().strftime('%Y-%m-%d')
                                         if date_key not in squat_counts:
                                             squat_counts[date_key] = 0
                                         squat_counts[date_key] += 1
-                                        # 초기화 횟수 증가
+                                        
                                         squat_start = False
                                         squat_completed = False
                                         squat_up = False
                                         squat_down = False
 
-                            # 스쿼트 동작 감지 및 피드백 로직
+                       
                                 if (squat_down) and (not squat_up) and not squat_completed:
-                                    if feedback not in exclude_feedbacks:  # 제외 대상이 아닐 때만 카운트
+                                    if feedback not in exclude_feedbacks: 
                                         if "무릎" in feedback:
                                             body_part_counts["무릎"] += 1
                                         if "엉덩이" in feedback:
@@ -344,7 +343,7 @@ def generate_frames_squat():
                                                 with app.app_context():
                                                     save_squat_count()
                                                 squat_completed = True
-                                                squat_up = True # 스쿼트 상승 시작을 표시
+                                                squat_up = True 
                                                 feedback_flag = False
                                                 
             
@@ -369,38 +368,35 @@ def save_squat_count():
         db.session.commit()
         
 def plot_graph_squat():
-    global squat_counts  # 전역 변수 squat_counts 사용 선언
+    global squat_counts  
     
-    # 틀린 자세 통계 그래프를 그리기 위해
     labels = body_part_counts.keys()
     values = body_part_counts.values()
-    total = sum(values) if values else 1  # 분모가 0인 경우 방지
+    total = sum(values) if values else 1  
 
     percentages = [100 * (v / total) for v in values]
     
-    plt.figure(figsize=(14, 7))  # 그래프의 전체 크기를 늘림
+    plt.figure(figsize=(14, 7))  
     
-    # 첫 번째 그래프: 틀린 자세 기록
     plt.subplot(1, 2, 1)
     plt.bar(labels, percentages, color='red')
-    plt.xlabel('신체부위', fontsize=18)  # 텍스트 크기 조정
-    plt.ylabel('빈도 (%)', fontsize=18)  # 텍스트 크기 조정
-    plt.title('틀린 자세 기록', fontsize=20)  # 텍스트 크기 조정
-    plt.xticks(fontsize=16)  # x축 틱 레이블의 폰트 크기
-    plt.yticks(fontsize=16)  # y축 틱 레이블의 폰트 크기
+    plt.xlabel('신체부위', fontsize=18) 
+    plt.ylabel('빈도 (%)', fontsize=18)
+    plt.title('틀린 자세 기록', fontsize=20) 
+    plt.xticks(fontsize=16) 
+    plt.yticks(fontsize=16)  
     plt.ylim(0, 100)
 
-    # 두 번째 그래프: 스쿼트 총 횟수
     plt.subplot(1, 2, 2)
     dates = list(squat_counts.keys())
     counts = list(squat_counts.values())
     plt.bar(dates, counts, color='blue', width=0.1)
-    plt.title("스쿼트 총 횟수", fontsize=20)  # 텍스트 크기 조정
-    plt.ylabel("총 횟수 (개)", fontsize=18)  # 텍스트 크기 조정
-    plt.ylim(0, max(counts + [3]))  # 최소 값은 3 이상을 유지하도록 설정
+    plt.title("스쿼트 총 횟수", fontsize=20) 
+    plt.ylabel("총 횟수 (개)", fontsize=18)  
+    plt.ylim(0, max(counts + [3]))
     plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
-    plt.xticks(fontsize=16)  # x축 틱 레이블의 폰트 크기
-    plt.yticks(fontsize=16)  # y축 틱 레이블의 폰트 크기
+    plt.xticks(fontsize=16)  
+    plt.yticks(fontsize=16) 
 
     img_buf = io.BytesIO()
     plt.savefig(img_buf, format='png', transparent=True)
@@ -410,16 +406,16 @@ def plot_graph_squat():
 
 def generate_frames_lunge():
     global body_part_counts_lunge, lunge_counts, app 
-    date_key = datetime.now().strftime('%Y-%m-%d')# 전역 변수 사용 선언
+    date_key = datetime.now().strftime('%Y-%m-%d') 
     with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
         
-        initial_head_height_lunge = None  # 초기 머리 높이 저장 변수
-        feedback_flag_lunge = True  # 초기 피드백 표시 플래그
-        lunge_start = False  # 스쿼트 내려갔는지 상태
+        initial_head_height_lunge = None  
+        feedback_flag_lunge = True  
+        lunge_start = False 
         lunge_completed = False
         lunge_up = False
         lunge_down = False
-        good_lunge_feedback_counts = {}  # 좋은 스쿼트 피드백 카운트 딕셔너리 초기화
+        good_lunge_feedback_counts = {} 
         lunge_detected = False
         lunge_start_time = None
         
@@ -432,7 +428,6 @@ def generate_frames_lunge():
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             results = pose.process(image)
 
-            # 초기 피드백 설정
             if feedback_flag_lunge:
                 feedback = "발을 골반 너비로 벌리고 런지를 시작해주세요!"
                 font_color = (255, 255, 255)
@@ -608,23 +603,22 @@ def generate_frames_lunge():
                                 if lunge_completed:
                                     if (right_knee_angle <= 165) and (left_knee_angle <= 165):
                                         feedback = "앞다리에 힘을 주며 천천히 올라와주세요!"
-                                        font_color = (255, 255, 0)  # 피드백 색상을 노란색으로 유지
+                                        font_color = (255, 255, 0)  
                                     else:
-                                        feedback = ""  # 무릎 각도가 165도를 넘으면 피드백을 비워 표시 중지
-                                        font_color = (255, 255, 255)  # 피드백이 없으므로 글씨색은 관계 없음
-                                        # 피드백 카운트 초기화 및 새 스쿼트 준비
-                                        good_lunge_feedback_counts.clear()  # 모든 피드백 카운트 초기화
+                                        feedback = ""  
+                                        font_color = (255, 255, 255)  
+                                        good_lunge_feedback_counts.clear()
                                         date_key = datetime.now().strftime('%Y-%m-%d')
                                         if date_key not in lunge_counts:
                                             lunge_counts[date_key] = 0
-                                        lunge_counts[date_key] += 1  # 초기화 횟수 증가
+                                        lunge_counts[date_key] += 1 
                                         lunge_start = False
                                         lunge_completed = False
                                         lunge_up = False
                                         lunge_down = False
                                 
                                 if (lunge_down) and (not lunge_up) and not lunge_completed:
-                                    if feedback not in exclude_feedbacks_lunge:  # 제외 대상이 아닐 때만 카운트
+                                    if feedback not in exclude_feedbacks_lunge:  
                                         if "어깨" in feedback:
                                             body_part_counts_lunge["몸통"] += 1
                                         if "오른쪽 무릎" in feedback:
@@ -647,8 +641,8 @@ def generate_frames_lunge():
                                                 with app.app_context():
                                                     save_lunge_count()
                                                 lunge_completed = True
-                                                lunge_up = True  # 스쿼트 상승 시작을 표시
-                                                feedback_flag_lunge = False  # 추가 피드백 표시 안 함
+                                                lunge_up = True  
+                                                feedback_flag_lunge = False  
                     
             image = draw_text(image, f"런지 횟수: {lunge_counts}", (10, 420), 30, font_color=(17, 255, 127))                                    
             image = draw_text(image, feedback, (10, 20), 30, font_color=font_color)
@@ -670,18 +664,15 @@ def save_lunge_count():
         db.session.commit()
         
 def plot_graph_lunge():
-    global lunge_counts  # 전역 변수 lunge_counts 사용 선언
-
-    # 틀린 자세 통계 그래프를 그리기 위해
+    global lunge_counts  
     labels_lunge = body_part_counts_lunge.keys()
     values_lunge = body_part_counts_lunge.values()
-    total = sum(values_lunge) if values_lunge else 1  # 분모가 0인 경우 방지
+    total = sum(values_lunge) if values_lunge else 1  
 
     percentages = [100 * (v / total) for v in values_lunge]
 
     plt.figure(figsize=(16, 8))
 
-    # 첫 번째 그래프: 틀린 자세 기록
     plt.subplot(1, 2, 1)
     plt.bar(labels_lunge, percentages, color='red')
     plt.xlabel('신체부위', fontsize=18)
@@ -691,15 +682,14 @@ def plot_graph_lunge():
     plt.yticks(fontsize=16)
     plt.ylim(0, 100)
 
-    # 두 번째 그래프: 런지 총 횟수
     plt.subplot(1, 2, 2)
     dates = list(lunge_counts.keys())
     counts = list(lunge_counts.values())
     plt.bar(dates, counts, color='blue', width=0.1)
     plt.title("런지 총 횟수", fontsize=20)
     plt.ylabel('개수 (개)', fontsize=18)
-    plt.ylim(0, max(counts + [3]))  # 최소 값은 3 이상을 유지하도록 설정
-    plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))  # y축의 값을 정수로 설정
+    plt.ylim(0, max(counts + [3]))  
+    plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))  
     plt.xticks( fontsize=16)
     plt.yticks(fontsize=16)
 
@@ -710,19 +700,19 @@ def plot_graph_lunge():
     return img_buf_lunge
 
 def generate_frames_plank(target_plank):
-    global body_part_counts_plank, plank_counts, app  # 전역 변수 사용 선언
+    global body_part_counts_plank, plank_counts, app  
     date_key = datetime.now().strftime('%Y-%m-%d')
     if date_key not in plank_counts:
         plank_counts[date_key] = 0
     with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
         
-        initial_head_height_plank = None  # 초기 머리 높이 저장 변수
-        feedback_flag_plank = True  # 초기 피드백 표시 플래그
-        plank_start = False  # 플랭크 내려갔는지 상태
+        initial_head_height_plank = None  
+        feedback_flag_plank = True  
+        plank_start = False  
         plank_completed = False
         plank_up = False
         plank_down = False
-        good_plank_feedback_counts = {}  # 좋은 플랭크 피드백 카운트 딕셔너리 초기화
+        good_plank_feedback_counts = {} 
         plank_detected = False
         plank_start_time = None
         
@@ -736,7 +726,6 @@ def generate_frames_plank(target_plank):
             results = pose.process(image)
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
                 
-            # 초기 피드백 설정
             if feedback_flag_plank:
                 feedback = "플랭크를 시작해주세요!"
                 font_color = (255, 255, 255)
@@ -794,15 +783,14 @@ def generate_frames_plank(target_plank):
                     knee_angle = calculate_angle([hips[0].x, hips[0].y], [knees[0].x, knees[0].y], [ankles[0].x, ankles[0].y])
                     right_shoulder_elbow_wrist = calculate_angle(right_shoulder, right_elbow, right_wrist)
                     
-                    # 플랭크 시작 조건
                     if (left_shoulder[1] < left_hip[1] and right_shoulder[1] < right_hip[1]) and \
                             (left_shoulder[1] < 0.5 and right_shoulder[1] < 0.5):
                         if shoulder_width < 0.1 and hip_width < 0.1:
-                            feedback_flag_plank = False  # 초기 피드백 제거
+                            feedback_flag_plank = False  
                             
                     if (not plank_start) and (not plank_completed):
-                        initial_head_height_plank = head[1]  # 플랭크 시작 시 머리 높이 측정
-                        plank_start = True  # 플랭크 시작 상태 활성화
+                        initial_head_height_plank = head[1]  
+                        plank_start = True  
                         plank_down = True
                         
                     if (plank_start) and (head[1] - initial_head_height_plank > 0.2) and (right_elbow[1] > 0.7):
@@ -871,10 +859,10 @@ def generate_frames_plank(target_plank):
                                  
                         if plank_completed:
                             feedback = ""
-                            good_plank_feedback_counts.clear()  # 모든 피드백 카운트 초기화
+                            good_plank_feedback_counts.clear()  
                             date_key = datetime.now().strftime('%Y-%m-%d')
                             plank_counts[date_key] += 1
-                            save_plank_count()  # 데이터베이스에 플랭크 횟수 저장
+                            save_plank_count()  
                             if plank_counts[date_key] >= target_plank:
                                 threading.Thread(target=play_sound, args=(sound_file,)).start()
                                 print("목표 플랭크 횟수와 시간에 도달했습니다.")
@@ -883,14 +871,13 @@ def generate_frames_plank(target_plank):
                             plank_completed = False
                             plank_start_time = None
 
-            # 플랭크 횟수 비교
             # if plank_counts[date_key] == target_plank:
             #     # 사운드 재생
             #     threading.Thread(target=play_sound, args=(sound_file,)).start()
             #     print("목표 플랭크 횟수와 시간에 도달했습니다.")
             #     break
             
-            # 텍스트 그리기                        
+                    
             image = draw_text(image, feedback, (10, 20), 30, font_color=font_color)
             image = draw_text(image, f"플랭크 횟수: {plank_counts}", (10, 420), 30, font_color=(17, 255, 127))                                    
             frame = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
@@ -911,18 +898,16 @@ def save_plank_count():
         db.session.commit()
         
 def plot_graph_plank():
-    global plank_counts  # 전역 변수 plank_counts 사용 선언
+    global plank_counts
 
-    # 틀린 자세 통계 그래프를 그리기 위해
     labels_plank = body_part_counts_plank.keys()
     values_plank = body_part_counts_plank.values()
-    total = sum(values_plank) if values_plank else 1  # 분모가 0인 경우 방지
+    total = sum(values_plank) if values_plank else 1  
 
     percentages = [100 * (v / total) for v in values_plank]
 
-    plt.figure(figsize=(18, 8))  # 그래프 크기 조정
+    plt.figure(figsize=(18, 8)) 
 
-    # 첫 번째 그래프: 틀린 자세 기록
     plt.subplot(1, 3, 1)
     plt.bar(labels_plank, percentages, color='red')
     plt.xlabel('신체부위', fontsize=16)
@@ -932,26 +917,24 @@ def plot_graph_plank():
     plt.yticks(fontsize=14)
     plt.ylim(0, 100)
 
-    # 두 번째 그래프: 플랭크 총 횟수
     plt.subplot(1, 3, 2)
     dates = list(plank_counts.keys())
     counts = list(plank_counts.values())
     plt.bar(dates, counts, color='blue', width=0.1)
     plt.title("플랭크 총 횟수", fontsize=18)
     plt.ylabel('개수 (개)', fontsize=16)
-    plt.ylim(0, max(counts + [3]))  # 최소 값은 3 이상을 유지하도록 설정
+    plt.ylim(0, max(counts + [3])) 
     plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
     plt.xticks(rotation=0, fontsize=14)
     plt.yticks(fontsize=14)
 
-    # 세 번째 그래프: 플랭크 유지시간
     plt.subplot(1, 3, 3)
     dates = list(plank_counts.keys())
-    counts = [count * 5 for count in plank_counts.values()]  # 각 횟수에 5를 곱하여 시간을 계산
+    counts = [count * 5 for count in plank_counts.values()] 
     plt.bar(dates, counts, color='green', width=0.1)
     plt.title("플랭크 유지시간", fontsize=18)
     plt.ylabel('시간 (초)', fontsize=16)
-    plt.ylim(0, max(counts + [15]))  # 최소 값은 15 이상을 유지하도록 설정
+    plt.ylim(0, max(counts + [15]))  
     plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
     plt.xticks(rotation=0, fontsize=14)
     plt.yticks(fontsize=14)
@@ -964,25 +947,24 @@ def plot_graph_plank():
 
 
 def generate_frames_dolphin(target_dolphin):
-    global body_part_counts_dolphin, dolphin_counts, app  # 전역 변수 사용 선언
-    date_key = datetime.now().strftime('%Y-%m-%d')
+    global body_part_counts_dolphin, dolphin_counts, app  
     if date_key not in dolphin_counts:
         dolphin_counts[date_key] = 0
     with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
         
-        initial_head_height_dolphin = None  # 초기 머리 높이 저장 변수
-        feedback_flag_dolphin = True  # 초기 피드백 표시 플래그
-        dolphin_start = False  # 돌고래 시작 상태
+        initial_head_height_dolphin = None 
+        feedback_flag_dolphin = True  
+        dolphin_start = False  
         dolphin_completed = False
         dolphin_up = False
         dolphin_down = False
-        good_dolphin_feedback_counts = {}  # 좋은 돌고래 자세 피드백 카운트 딕셔너리 초기화
+        good_dolphin_feedback_counts = {} 
         dolphin_detected = False
         dolphin_start_time = None
         while True:
             frame = camera_manager.get_frame()
             if frame is None:
-                time.sleep(0.1)  # 웹캠에서 프레임을 가져오지 못할 때 잠시 대기
+                time.sleep(0.1)  
                 continue
             
             frame = cv2.flip(frame, 1)
@@ -990,7 +972,6 @@ def generate_frames_dolphin(target_dolphin):
             results = pose.process(image)
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)            
             
-            # 초기 피드백 설정
             if feedback_flag_dolphin:
                 feedback = "어깨를 귀 옆에 붙이지 않은 상태로 돌고래 자세를 시작해주세요!"
                 font_color = (255, 255, 255)
@@ -1046,15 +1027,14 @@ def generate_frames_dolphin(target_dolphin):
                     hip_shoulder_elbow = calculate_angle([hips[0].x, hips[0].y], [shoulders[0].x, shoulders[0].y], [elbows[0].x, elbows[0].y])
                     knee_angle = calculate_angle([hips[0].x, hips[0].y], [knees[0].x, knees[0].y], [ankles[0].x, ankles[0].y])
                     
-                    # 돌고래 시작 조건
                     if (left_shoulder[1] < left_hip[1] and right_shoulder[1] < right_hip[1]) and \
                             (left_shoulder[1] < 0.5 and right_shoulder[1] < 0.5):
                         if shoulder_width < 0.1 and hip_width < 0.1:
-                            feedback_flag = False  # 초기 피드백 제거
+                            feedback_flag = False 
                             
                     if (not dolphin_start) and (not dolphin_completed):
-                        initial_head_height = head[1]  # 돌고래 시작 시 머리 높이 측정
-                        dolphin_start = True  # 돌고래 시작 상태 활성화
+                        initial_head_height = head[1]  
+                        dolphin_start = True  
                         dolphin_down = True
                         
                     if (dolphin_start) and (head[1] - initial_head_height > 0.2) and (right_wrist[1] > 0.5):
@@ -1125,10 +1105,10 @@ def generate_frames_dolphin(target_dolphin):
                                             
                     if dolphin_completed:
                         feedback = ""
-                        good_dolphin_feedback_counts.clear()  # 모든 피드백 카운트 초기화
+                        good_dolphin_feedback_counts.clear()  
                         date_key = datetime.now().strftime('%Y-%m-%d')
                         dolphin_counts[date_key] += 1
-                        save_dolphin_count()  # 데이터베이스에 플랭크 횟수 저장
+                        save_dolphin_count()
                         if dolphin_counts[date_key] >= target_dolphin:
                             threading.Thread(target=play_sound, args=(sound_file,)).start()
                             print("목표 돌고래자세 횟수와 시간에 도달했습니다.")
@@ -1136,9 +1116,7 @@ def generate_frames_dolphin(target_dolphin):
                             
                         dolphin_completed = False
                         dolphin_start_time = None
-                                            
-            
-            # 텍스트 그리기                        
+                                                               
             image = draw_text(image, feedback, (10, 20), 30, font_color=font_color)
             image = draw_text(image, f"돌고래 자세 횟수: {dolphin_counts}", (10, 420), 30, font_color=(17, 255, 127))                                    
             frame = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
@@ -1160,18 +1138,16 @@ def save_dolphin_count():
                 
             
 def plot_graph_dolphin():
-    global dolphin_counts  # 전역 변수 dolphin_count 사용 선언
+    global dolphin_counts 
     
-    # 틀린 자세 통계 그래프를 그리기 위해
     labels_dolphin = body_part_counts_dolphin.keys()
     values_dolphin = body_part_counts_dolphin.values()
-    total = sum(values_dolphin) if values_dolphin else 1  # 분모가 0인 경우 방지
+    total = sum(values_dolphin) if values_dolphin else 1 
 
     percentages = [100 * (v / total) for v in values_dolphin]
     
     plt.figure(figsize=(12, 6))
-    
-    # 첫 번째 그래프: 틀린 자세 기록
+
     plt.subplot(1, 3, 1)
     plt.bar(labels_dolphin, percentages, color='red')
     plt.xlabel('신체부위', fontsize=16)
@@ -1187,18 +1163,18 @@ def plot_graph_dolphin():
     plt.bar(dates, counts, color='blue', width=0.1)
     plt.title("돌고래자세 총 횟수", fontsize=18)
     plt.ylabel('개수 (개)', fontsize=16)
-    plt.ylim(0, max(counts + [3]))  # 최소 값은 3 이상을 유지하도록 설정
+    plt.ylim(0, max(counts + [3]))  
     plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
     plt.xticks(rotation=0, fontsize=14)
     plt.yticks(fontsize=14)
 
     plt.subplot(1, 3, 3)
     dates = list(dolphin_counts.keys())
-    counts = [count * 5 for count in dolphin_counts.values()]  # 각 횟수에 5를 곱하여 시간을 계산
+    counts = [count * 5 for count in dolphin_counts.values()]  
     plt.bar(dates, counts, color='green', width=0.1)
     plt.title("돌고래자세 유지시간", fontsize=18)
     plt.ylabel('시간 (초)', fontsize=16)
-    plt.ylim(0, max(counts + [15]))  # 최소 값은 15 이상을 유지하도록 설정
+    plt.ylim(0, max(counts + [15]))  
     plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
     plt.xticks(rotation=0, fontsize=14)
     plt.yticks(fontsize=14)
@@ -1573,4 +1549,4 @@ if __name__ == '__main__':
 
 # @app.route('/squat_data')
 # def squat_data():
-#     return jsonify({'count': squat_count})  # `squat_count`는 전역 변수로 관리
+#     return jsonify({'count': squat_count}) 
